@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+
+            background-image:
+             linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url("/static/images/background.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            }
+
+        .nav { 
+            margin-bottom: 30px; 
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: flex-end;   
+        }
+        .nav a { 
+            padding: 10px 20px;
+            text-decoration: none; 
+            color: #333;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .nav a:hover {
+            background: #ffc107;
+            transform: translateY(-2px);
+        }
+        .nav a.active {
+            background: #ffc107;
+            font-weight: bold;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold;
+            color: #333;
+        }
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 2px solid #ddd; 
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input:focus {
+            border-color: #ffc107;
+            outline: none;
+        }
+        .range-hint {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        button { 
+            background: #ffc107; 
+            color: #333;
+            padding: 15px 40px; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            display: block;
+            margin: 30px auto;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #ffb300;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+        .result, .error { 
+            margin-top: 30px; 
+            padding: 20px; 
+            border-radius: 10px;
+            display: none;
+        }
+        .result { 
+            background: #d4edda; 
+            border: 2px solid #c3e6cb;
+        }
+        .error { 
+            background: #f8d7da; 
+            border: 2px solid #f5c6cb;
+        }
+        .crop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .crop-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .crop-item:hover {
+         background: #ffc107;          
+         cursor: pointer;              
+        transform: translateY(-3px);   
+        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        }
+
+        .main-box {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+
+            /* Glass effect */
+            background: rgba(255, 255, 255, 0.65);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    @media (max-width: 768px) {
+        .main-box {
+            padding: 20px;
+        }
+
+        .nav {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            font-size: 22px;
+            text-align: center;
+        }
+    }
+
+
+    </style>
+</head>
+<body>
+    
+    <div class="nav">
+        <a href="/">🏠 Home</a>
+        <a href="/crop" class="active">🌽 Crop</a>
+        <a href="/fertilizer">🌱 Fertilizer</a>
+        <a href="/price">💰 Price</a>
+        
+    </div>
+    <div class="main-box">
+    
+    <h1>🌽 Crop Recommendation System</h1>
+    
+    <div class="info-box">
+        <h3>📋 About this tool:</h3>
+        <p>Enter soil and climate parameters to get recommendations for the most suitable crops to grow in your region.</p>
+        <p>Available crops: <strong>{{ available_crops|length }}</strong> types</p>
+    </div>
+    
+    <form id="cropPredictionForm">
+        {% for feature in features %}
+        <div class="form-group">
+            <label for="{{ feature }}">
+                {% if feature == 'N' %}Nitrogen (N)
+                {% elif feature == 'P' %}Phosphorus (P)
+                {% elif feature == 'K' %}Potassium (K)
+                {% elif feature == 'ph' %}pH Level
+                {% else %}{{ feature|title }}{% endif %}
+                :
+            </label>
+            <input type="number" 
+                   id="{{ feature }}" 
+                   name="{{ feature }}" 
+                   step="0.1" 
+                   required
+                   {% if feature_ranges and feature in feature_ranges %}
+                   placeholder="Range: {{ feature_ranges[feature].min|round(1) }} - {{ feature_ranges[feature].max|round(1) }}"
+                   {% endif %}>
+            {% if feature_ranges and feature in feature_ranges %}
+            <div class="range-hint">
+                Typical range: {{ feature_ranges[feature].min|round(1) }} to {{ feature_ranges[feature].max|round(1) }}
+                (Average: {{ feature_ranges[feature].mean|round(1) }})
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        <button type="submit">🌾 Get Crop Recommendation</button>
+    </form>
+    
+    <div id="result" class="result" style="display: none;"></div>
+    <div id="error" class="error" style="display: none;"></div>
+    
+    {% if available_crops %}
+    <div class="info-box">
+        <h3>🌱 Available Crops in Database:</h3>
+        <div class="crop-grid">
+            {% for crop in available_crops %}
+            <div class="crop-item">{{ crop }}</div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <script>
+        document.getElementById('cropPredictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/predict-crop', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    document.getElementById('error').textContent = data.message;
+                    document.getElementById('error').style.display = 'block';
+                } else {
+                    let resultHTML = `
+                        <h2>✅ Recommended Crop</h2>
+                        <div style="font-size: 2em; margin: 20px 0; color: #155724;">${data.recommended_crop}</div>
+                        
+                        <h3>📊 Top Recommendations:</h3>
+                        <div style="margin: 20px 0;">
+                    `;
+                    
+                    data.top_recommendations.forEach((rec, index) => {
+                        const percentage = (rec.probability * 100).toFixed(1);
+                        const barWidth = rec.probability * 100;
+                        resultHTML += `
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span>${index + 1}. ${rec.crop}</span>
+                                    <span>${percentage}%</span>
+                                </div>
+                                <div style="background: #e9ecef; height: 10px; border-radius: 5px;">
+                                    <div style="background: #28a745; width: ${barWidth}%; height: 100%; border-radius: 5px;"></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    resultHTML += `
+                        </div>
+                        <h3>📝 Input Parameters:</h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
+                    `;
+                    
+                    for (const [key, value] of Object.entries(data.input_features)) {
+                        resultHTML += `<div><strong>${key}:</strong> ${value}</div>`;
+                    }
+                    
+                    resultHTML += `</div>`;
+                    
+                    document.getElementById('result').innerHTML = resultHTML;
+                    document.getElementById('result').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('error').textContent = 'Network error occurred. Please try again.';
+                document.getElementById('error').style.display = 'block';
+            }
+        });
+    </script>
+    </div>
+</body>
+</html>
