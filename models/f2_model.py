@@ -19,7 +19,7 @@ class F2Model:
         
     def load_model(self):
         """Load the trained model"""
-        self.model = pickle.load(open('data/classifier.pkl', 'rb'))
+        self.model = pickle.load(open('models/classifier.pkl', 'rb'))
     
     def load_data(self):
         """Load and prepare data"""
