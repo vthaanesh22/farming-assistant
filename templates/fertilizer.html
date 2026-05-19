@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fertilizer Recommendation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            background-image:
+            linear-gradient(rgba(12, 61, 42, 0.85), rgba(12, 61, 42, 0.85)),
+            url("/static/images/background2.jpg");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+       .nav {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav a {
+            padding: 8px 18px;
+            border-radius: 25px;           /* OVAL SHAPE */
+            background: rgba(255, 255, 255, 0.15);
+            color: white;                  /* NOT link blue */
+            text-decoration: none;         /* NO underline */
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav a:hover {
+            background: #28a745;           /* GREEN hover */
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Active page */
+        .nav a.active {
+            background: #28a745;
+            color: white;
+        }
+
+        .form-group {
+             margin-bottom: 15px;
+             }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold; 
+        }
+       input, select {
+             width: 100%;
+             padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+             border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 8px;
+             font-size: 16px;
+            }
+
+                        /* Hover effect */
+        input:hover,select:hover {
+                border-color: #28a745;
+                box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
+                transition: all 0.2s ease;
+            }
+        /* Green effect BEFORE clicking */
+        select:hover {
+                background: rgba(40, 167, 69, 0.08);
+        }
+
+            /* Focus (click) effect */
+        input:focus, select:focus {
+                outline: none;
+                border-color: #28a745;
+                box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.4);
+                background: rgba(255, 255, 255, 0.95);
+                transition: all 0.2s ease;
+            }
+
+        select {
+            cursor: pointer;
+            color: #222;
+        }
+        select:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
+        }
+        select option:checked {
+            background-color: #28a745;
+            color: white;
+        }
+
+
+        button { 
+            background: #28a745; 
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px; 
+            cursor: pointer;
+             }
+        .result { 
+            margin-top: 20px; 
+            padding: 15px;
+            background: #d4edda;
+            border-radius: 4px;
+         }
+        .error {
+                margin-top: 20px;
+                padding: 15px;
+                background: #f8d7da;
+                border-radius: 4px;
+             }
+        .main-box {
+                max-width: 900px;
+                margin: 40px auto;
+                padding: 30px;
+                background: rgba(255, 255, 255, 0.05);  /* almost transparent */
+                backdrop-filter: blur(4px);             /* very light blur */
+                -webkit-backdrop-filter: blur(4px);
+                border: none;                            /* remove box border */
+                border-radius: 0;                       /* remove box shape */
+                box-shadow: none;                       /* remove card effect */
+            }
+
+            /* Select box styling */
+            select {
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+
+                background-color: rgba(255, 255, 255, 0.85);
+                border: 2px solid rgba(255,255,255,0.6);
+                border-radius: 10px;
+                padding: 12px;
+                font-size: 16px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            /* Focus (when clicked) */
+            select:focus {
+                outline: none;
+                border-color: #28a745;
+                box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+            }
+
+            /* Selected option */
+            select option:checked {
+                background-color: #28a745;
+                color: white;
+            }
+
+            /* Disabled placeholder */
+            select option[value=""] {
+                color: #777;
+            }
+
+            @media (max-width: 768px) {
+        .main-box {
+                padding: 20px;
+        }
+
+        .nav {
+                justify-content: center;
+                flex-wrap: wrap;
+        }
+
+        h1 {
+                font-size: 22px;
+                text-align: center;
+        }
+    }
+
+   
+    </style>
+</head>
+<body>
+   <div class="nav">
+    <a href="/">🏠 Home</a>
+    <a href="/crop">🌽 Crop</a>
+    <a href="/fertilizer" class="active">🌱 Fertilizer</a>
+    <a href="/price">💰 Price</a>
+    </div>
+<div class="main-box">
+    
+    <h1>🌱 Fertilizer Recommendation</h1>
+    
+    <form id="predictionForm">
+        <div class="form-group">
+            <label>Nitrogen (N):</label>
+            <input type="number" name="nitrogen" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Phosphorous (P):</label>
+            <input type="number" name="phosphorous" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Potassium (K):</label>
+            <input type="number" name="potassium" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Temperature (°C):</label>
+            <input type="number" step="0.1" name="temperature" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Humidity (%):</label>
+            <input type="number" step="0.1" name="humidity" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Moisture (%):</label>
+            <input type="number" step="0.1" name="moisture" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Soil Type:</label>
+            <select name="soil_type" required>
+                <option value="">Select Soil Type</option>
+                {% for soil in soil_types %}
+                <option value="{{ soil }}">{{ soil }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Crop Type:</label>
+            <select name="crop_type" required>
+                <option value="">Select Crop Type</option>
+                {% for crop in crop_types %}
+                <option value="{{ crop }}">{{ crop }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button type="submit">Get Recommendation</button>
+    </form>
+    
+    <div id="result" class="result" style="display: none;"></div>
+    <div id="error" class="error" style="display: none;"></div>
+    
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/predict-fertilizer', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    document.getElementById('error').textContent = data.message;
+                    document.getElementById('error').style.display = 'block';
+                } else {
+                    document.getElementById('result').textContent = data.message;
+                    document.getElementById('result').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('error').textContent = 'Error occurred';
+                document.getElementById('error').style.display = 'block';
+            }
+        });
+    </script>
+</div>
+</body>
+</html>
