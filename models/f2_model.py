@@ -23,7 +23,7 @@ class F2Model:
     
     def load_data(self):
         """Load and prepare data"""
-        self.data = pd.read_csv('data/f2.csv')
+        self.data = pd.read_csv('datasets/f2.csv')
         self.data.rename(columns={
             'Humidity ': 'Humidity',
             'Soil Type': 'Soil_Type',
