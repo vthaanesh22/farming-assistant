@@ -1,0 +1,31 @@
+{
+    "data_files": {
+        "dataset": "data/f2.csv",
+        "model": "data/classifier.pkl"
+    },
+    "model_params": {
+        "input_features": ["temperature", "humidity", "moisture", "soil_type", "crop_type", "N", "K", "P"],
+        "column_mappings": {
+            "Humidity ": "Humidity",
+            "Soil Type": "Soil_Type",
+            "Crop Type": "Crop_Type",
+            "Fertilizer Name": "Fertilizer"
+        }
+    },
+    "fertilizer_mapping": {
+        "0": "10-10-10",
+        "1": "10-26-26",
+        "2": "14-14-14",
+        "3": "14-35-14",
+        "4": "15-15-15",
+        "5": "17-17-17",
+        "6": "20-20",
+        "7": "28-28",
+        "8": "DAP",
+        "9": "Potassium chloride",
+        "10": "Potassium sulfate",
+        "11": "Superphosphate",
+        "12": "TSP",
+        "13": "Urea"
+    }
+}
