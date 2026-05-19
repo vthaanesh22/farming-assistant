@@ -52,7 +52,7 @@ class CropModel:
                 self.scaler = MinMaxScaler()
                 if len(self.df) > 0:
                     self.scaler.fit(self.df[self.FEATURES])
-                    os.makedirs('data', exist_ok=True)
+                    os.makedirs('models', exist_ok=True)
                     pickle.dump(self.scaler, open('models/minmaxscaler.pkl', 'wb'))
             
             # Load label encoder
@@ -105,7 +105,7 @@ class CropModel:
             self.model.fit(X_train, y_train)
             
             # Save model components
-            os.makedirs('data', exist_ok=True)
+            os.makedirs('models', exist_ok=True)
             pickle.dump(self.model, open('models/cropmodel.pkl', 'wb'))
             pickle.dump(self.scaler, open('models/minmaxscaler.pkl', 'wb'))
             pickle.dump(self.le, open('models/labelencoder.pkl', 'wb'))
