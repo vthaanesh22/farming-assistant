@@ -66,7 +66,7 @@ print("=" * 50)
 @app.route('/')
 def home():
     print("\n🌐 Home page requested")
-    return render_template('home.html',
+    return render_template('index.html',
                          f2_model=f2_model,
                          price_model=price_model,
                          crop_model=crop_model)
@@ -187,4 +187,4 @@ def predict_crop():
 
 if __name__ == '__main__':
     print("\n🌍 Starting Flask server...")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
