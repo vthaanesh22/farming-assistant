@@ -33,8 +33,8 @@ class CropModel:
         """Load trained model, scaler, and label encoder"""
         try:
             # Try to load pretrained model
-            if os.path.exists('data/cropmodel.pkl'):
-                self.model = pickle.load(open('data/cropmodel.pkl', 'rb'))
+            if os.path.exists('models/cropmodel.pkl'):
+                self.model = pickle.load(open('models/cropmodel.pkl', 'rb'))
                 print("Loaded pretrained crop model")
             elif os.path.exists('data/model_logistic.pkl'):
                 self.model = pickle.load(open('data/model_logistic.pkl', 'rb'))
@@ -44,8 +44,8 @@ class CropModel:
                 self.train_model()
             
             # Load scaler
-            if os.path.exists('data/minmaxscaler.pkl'):
-                self.scaler = pickle.load(open('data/minmaxscaler.pkl', 'rb'))
+            if os.path.exists('models/minmaxscaler.pkl'):
+                self.scaler = pickle.load(open('models/minmaxscaler.pkl', 'rb'))
                 print("Loaded scaler")
             else:
                 print("Creating new scaler...")
@@ -53,11 +53,11 @@ class CropModel:
                 if len(self.df) > 0:
                     self.scaler.fit(self.df[self.FEATURES])
                     os.makedirs('data', exist_ok=True)
-                    pickle.dump(self.scaler, open('data/minmaxscaler.pkl', 'wb'))
+                    pickle.dump(self.scaler, open('models/minmaxscaler.pkl', 'wb'))
             
             # Load label encoder
-            if os.path.exists('data/labelencoder.pkl'):
-                self.le = pickle.load(open('data/labelencoder.pkl', 'rb'))
+            if os.path.exists('models/labelencoder.pkl'):
+                self.le = pickle.load(open('models/labelencoder.pkl', 'rb'))
                 print("Loaded label encoder")
             else:
                 print("Creating new label encoder...")
@@ -65,7 +65,7 @@ class CropModel:
                 if len(self.df) > 0 and 'label' in self.df.columns:
                     self.le.fit(self.df['label'])
                     os.makedirs('data', exist_ok=True)
-                    pickle.dump(self.le, open('data/labelencoder.pkl', 'wb'))
+                    pickle.dump(self.le, open('models/labelencoder.pkl', 'wb'))
             
         except Exception as e:
             print(f"Error loading crop model components: {e}")
@@ -106,9 +106,9 @@ class CropModel:
             
             # Save model components
             os.makedirs('data', exist_ok=True)
-            pickle.dump(self.model, open('data/cropmodel.pkl', 'wb'))
-            pickle.dump(self.scaler, open('data/minmaxscaler.pkl', 'wb'))
-            pickle.dump(self.le, open('data/labelencoder.pkl', 'wb'))
+            pickle.dump(self.model, open('models/cropmodel.pkl', 'wb'))
+            pickle.dump(self.scaler, open('models/minmaxscaler.pkl', 'wb'))
+            pickle.dump(self.le, open('models/labelencoder.pkl', 'wb'))
             
             print(f"Crop model trained and saved. Available crops: {len(self.le.classes_)}")
             
